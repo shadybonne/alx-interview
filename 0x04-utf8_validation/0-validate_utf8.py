@@ -1,26 +1,32 @@
 #!/usr/bin/python3
 """
-]11;rgb:0000/0000/0000\Defines a method that determines if a given data set
-represents valid UTF-8 encoding
+UTF-8 Validation
 """
 
 
 def validUTF8(data):
     """
-    Determines if a given data set represents valid UTF-8 encoding
-
-    parameters:
-        data [list of ints]:
-            each integer represents 1 byte of data
-            data set can contain multiple characters
-            each character in UTF-8 can be 1 to 4 bytes long
-
-    returns:
-        True if data is valid UTF-8 encoding, False otherwise
+    determines if a given data set represents
+    a valid UTF-8 encoding
     """
-    if type(data) is not list:
-        return False
+    iterator = 0
+
     for i in data:
-        if type(i) is not int:
-            return False
-    return True
+        if iterator == 0:
+            if i & 128 == 0:
+                iterator = 0
+            elif i & 224 == 192:
+                iterator = 1
+            elif i & 240 == 224:
+                iterator = 2
+            elif i & 248 == 240:
+                iterator = 3
+            else:
+                return False
+        else:
+            if i & 192 != 128:
+                return False
+            iterator -= 1
+    if iterator == 0:
+        return True
+    return False
